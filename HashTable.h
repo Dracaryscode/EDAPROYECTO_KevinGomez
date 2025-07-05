@@ -23,10 +23,11 @@ public:
     TablaHash(int cap = 50009, float fc = 0.7f); // Capacidad mayor para 50k
     ~TablaHash();
 
-    // CAMBIO: El método ahora inserta un puntero a Persona.
+    // CAMBIO: El méto do ahora inserta un puntero a Persona.
+
     bool insertar(Persona* persona);
 
-    // CAMBIO: El método ahora busca y devuelve un puntero a Persona.
+    // CAMBIO: El méto do ahora busca y devuelve un puntero a Persona.
     Persona* buscar(int id);
 
     bool eliminar(int id);
