@@ -30,7 +30,7 @@ private:
     void inorder(RBNode* nodo);
     void consultaFranja(RBNode* nodo, int h1, int h2);
     // CAMBIO: La declaración ahora coincide con la del .cpp
-    void contarZonas(AVLNode* nodo, int* zonas, std::string* zonasNombres, int& nZonas);
+    void contarZonas(RBNode* nodo, int* zonas, std::string* zonasNombres, int& nZonas);
 
 public:
     RBTree();

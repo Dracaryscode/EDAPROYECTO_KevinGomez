@@ -62,6 +62,7 @@ int main() {
         opcion = leerEntero();
 
         if (opcion == 1) {
+            /*
             int id;
             std::string nombre;
             std::cout << "DNI/código: ";
@@ -71,16 +72,40 @@ int main() {
             if (tabla.insertar(id, nombre))
                 std::cout << "Usuario registrado." << std::endl;
             else
-                std::cout << "Error: usuario ya existe." << std::endl;
+                std::cout << "Error: usuario ya existe." << std::endl;*/
+            std::cout << "Esta opción ha sido deshabilitada. Por favor, cargue los usuarios desde un archivo con la opción 12." << std::endl;
+
         } else if (opcion == 2) {
-            int id;
-            std::string nombre;
-            std::cout << "DNI/código: ";
-            id = leerEntero();
-            if (tabla.buscar(id, nombre))
-                std::cout << "Usuario: " << nombre << std::endl;
-            else
-                std::cout << "No encontrado." << std::endl;
+            std::cout << "\n--- CONTROL DE ACCESO ---" << std::endl;
+            std::cout << "Ingrese el DNI de la persona: ";
+            int id = leerEntero();
+
+            // Usamos la tabla hash para buscar a la persona por su ID.
+            // El méto do buscar ahora devuelve un puntero a Persona.
+            Persona* personaEncontrada = tabla.buscar(id);
+
+            // Verificamos si el puntero es válido (no es nullptr)
+            if (personaEncontrada != nullptr) {
+                std::cout << "Acceso autorizado para: " << personaEncontrada->nombre << std::endl;
+                std::cout << "Prioridad asignada: " << personaEncontrada->prioridad << std::endl;
+
+                // Creamos un objeto PersonaCola para el MaxHeap
+                PersonaCola personaParaHeap;
+                personaParaHeap.id = personaEncontrada->id;
+                personaParaHeap.nombre = personaEncontrada->nombre;
+                personaParaHeap.prioridad = personaEncontrada->prioridad;
+                personaParaHeap.tipo = personaEncontrada->zona; // Usamos la zona como "tipo"
+
+                // Insertamos la persona en la cola de prioridad
+                if (heap.insertar(personaParaHeap)) {
+                    std::cout << personaEncontrada->nombre << " ha sido añadido/a a la cola de ingreso." << std::endl;
+                } else {
+                    std::cout << "Error: La cola de ingreso está llena." << std::endl;
+                }
+
+            } else {
+                std::cout << "Acceso denegado. DNI no encontrado en la base de datos." << std::endl;
+            }
         } else if (opcion == 3) {
             int id;
             std::cout << "DNI/código: ";
