@@ -1,13 +1,14 @@
 #ifndef RBTREE_H
 #define RBTREE_H
 
-#include <iostream>
+#include <string> // CAMBIO: Añadir include para std::string
+
 
 enum Color { ROJO, NEGRO };
 
 struct RBAcceso {
     int id;
-    char zona[30];
+    std::string zona; // CAMBIO: de char zona[30] a std::string
     int hora;
 };
 
@@ -28,7 +29,8 @@ private:
     void insertFixup(RBNode* z);
     void inorder(RBNode* nodo);
     void consultaFranja(RBNode* nodo, int h1, int h2);
-    void contarZonas(RBNode* nodo, int* zonas, char zonasNombres[][30], int& nZonas);
+    // CAMBIO: La declaración ahora coincide con la del .cpp
+    void contarZonas(AVLNode* nodo, int* zonas, std::string* zonasNombres, int& nZonas);
 
 public:
     RBTree();

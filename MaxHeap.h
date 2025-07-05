@@ -1,13 +1,13 @@
 #ifndef MAXHEAP_H
 #define MAXHEAP_H
 
-#include <iostream>
+#include <string> // CAMBIO: Añadir include para std::string
 
 struct PersonaCola {
     int id;
-    char nombre[50];
+    std::string nombre; // CAMBIO: de char nombre[50] a std::string
     int prioridad;
-    char tipo[20];
+    std::string tipo;   // CAMBIO: de char tipo[20] a std::string
 };
 
 class ColaPrioridadMaxima {
@@ -19,10 +19,10 @@ private:
     void subir(int indice);
     void bajar(int indice);
     int buscarIndice(int id);
-    void copiarCadena(char* destino, const char* origen, int maxTam);
+    // CAMBIO: ya no se necesita copiarCadena
 
 public:
-    ColaPrioridadMaxima(int cap = 1000);
+    ColaPrioridadMaxima(int cap = 50000); // CAMBIO: Aumentar capacidad por defecto
     ~ColaPrioridadMaxima();
     bool insertar(const PersonaCola& persona);
     bool extraerMax(PersonaCola& persona);

@@ -1,5 +1,6 @@
 #include "AVLTree.h"
-#include <cstring> // Para strcmp, strcpy
+#include <string> // CAMBIO: Añadir include para std::string
+
 #include <iostream>
 
 using namespace std;
@@ -83,23 +84,26 @@ void AVLTree::consultaFranja(AVLNode* nodo, int h1, int h2) {
         consultaFranja(nodo->der, h1, h2);
 }
 
-void AVLTree::contarZonas(AVLNode* nodo, int* zonas, char zonasNombres[][30], int& nZonas) {
+void AVLTree::contarZonas(AVLNode* nodo, int* zonas, std::string* zonasNombres, int& nZonas) {
     if (!nodo) return;
     int i;
     for (i = 0; i < nZonas; ++i) {
-        if (strcmp(zonasNombres[i], nodo->acceso.zona) == 0) {
+        // CAMBIO: de strcmp(zonasNombres[i], nodo->acceso.zona) == 0 a ==
+        if (zonasNombres[i] == nodo->acceso.zona) {
             zonas[i]++;
             break;
         }
     }
     if (i == nZonas) {
-        strcpy(zonasNombres[nZonas], nodo->acceso.zona);
+        // CAMBIO: de strcpy a asignación directa
+        zonasNombres[nZonas] = nodo->acceso.zona;
         zonas[nZonas] = 1;
         nZonas++;
     }
     contarZonas(nodo->izq, zonas, zonasNombres, nZonas);
     contarZonas(nodo->der, zonas, zonasNombres, nZonas);
 }
+
 
 AVLTree::AVLTree() { raiz = nullptr; }
 
@@ -117,7 +121,8 @@ void AVLTree::consultaPorFranja(int h1, int h2) {
 
 void AVLTree::zonaConMasEntradas() {
     int zonas[100] = {0};
-    char zonasNombres[100][30];
+    // CAMBIO: El arreglo ahora es de std::string
+    std::string zonasNombres[100];
     int nZonas = 0;
     contarZonas(raiz, zonas, zonasNombres, nZonas);
     int maxIdx = 0;

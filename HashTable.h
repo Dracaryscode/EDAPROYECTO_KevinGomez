@@ -1,11 +1,11 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-#include <iostream>
+#include <string> // CAMBIO: Añadir include para std::string
 
 struct EntradaHash {
     int id;
-    char nombre[50];
+    std::string nombre; // CAMBIO: de char nombre[50] a std::string
     bool activo;
 };
 
@@ -18,13 +18,15 @@ private:
 
     int hash(int id);
     void rehacerHash();
-    void copiarCadena(char* destino, const char* origen);
+    // CAMBIO: ya no se necesita copiarCadena
 
 public:
     TablaHash(int cap = 1009, float fc = 0.7f);
     ~TablaHash();
-    bool insertar(int id, const char* nombre);
-    bool buscar(int id, char* nombreOut);
+    // CAMBIO: El parámetro ahora es const std::string&
+    bool insertar(int id, const std::string& nombre);
+    // CAMBIO: El parámetro de salida ahora es std::string&
+    bool buscar(int id, std::string& nombreOut);
     bool eliminar(int id);
     int obtenerCantidad() const;
 };

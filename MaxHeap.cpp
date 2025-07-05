@@ -45,14 +45,7 @@ int ColaPrioridadMaxima::buscarIndice(int id) {
     return -1;
 }
 
-void ColaPrioridadMaxima::copiarCadena(char* destino, const char* origen, int maxTam) {
-    int i = 0;
-    while (origen[i] != '\0' && i < maxTam - 1) {
-        destino[i] = origen[i];
-        i++;
-    }
-    destino[i] = '\0';
-}
+// CAMBIO: Se elimina la función copiarCadena
 
 ColaPrioridadMaxima::ColaPrioridadMaxima(int cap) {
     capacidad = cap;
@@ -66,14 +59,13 @@ ColaPrioridadMaxima::~ColaPrioridadMaxima() {
 
 bool ColaPrioridadMaxima::insertar(const PersonaCola& persona) {
     if (cantidad == capacidad) return false;
-    arreglo[cantidad].id = persona.id;
-    copiarCadena(arreglo[cantidad].nombre, persona.nombre, 50);
-    arreglo[cantidad].prioridad = persona.prioridad;
-    copiarCadena(arreglo[cantidad].tipo, persona.tipo, 20);
-    cantidad++; // Increment before calling up
+    // CAMBIO: Asignación directa de std::string
+    arreglo[cantidad] = persona;
+    cantidad++;
     subir(cantidad - 1);
     return true;
 }
+
 
 bool ColaPrioridadMaxima::extraerMax(PersonaCola& persona) {
     if (cantidad == 0) return false;
@@ -98,11 +90,21 @@ bool ColaPrioridadMaxima::actualizarPrioridad(int id, int nuevaPrioridad) {
 
 void ColaPrioridadMaxima::mostrarSiguientes(int n) {
     cout << "\n--- Siguientes personas en la cola (mayor prioridad primero) ---" << endl;
-    int mostrar = (n < cantidad) ? n : cantidad;
-    for (int i = 0; i < mostrar; ++i) {
-        cout << i + 1 << ". " << arreglo[i].nombre << " (" << arreglo[i].tipo << ", Prioridad: " << arreglo[i].prioridad << ")" << endl;
+
+    // Creación de una copia temporal para no modificar el heap original
+    ColaPrioridadMaxima copia = *this;
+
+    int mostrar = (n < copia.cantidad) ? n : copia.cantidad;
+    if (mostrar == 0) {
+        cout << "No hay personas en la cola." << endl;
+        return;
     }
-    if (mostrar == 0) cout << "No hay personas en la cola." << endl;
+
+    for (int i = 0; i < mostrar; ++i) {
+        PersonaCola p;
+        copia.extraerMax(p); // Extraemos el máximo de la copia
+        cout << i + 1 << ". " << p.nombre << " (" << p.tipo << ", Prioridad: " << p.prioridad << ")" << endl;
+    }
 }
 
 int ColaPrioridadMaxima::obtenerCantidad() const { return cantidad; }

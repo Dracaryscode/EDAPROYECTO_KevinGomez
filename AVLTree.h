@@ -1,11 +1,12 @@
 #ifndef AVLTREE_H
 #define AVLTREE_H
+#include <string> // CAMBIO: Añadir include para std::string
 
 #include <iostream>
 
 struct Acceso {
     int id;
-    char zona[30];
+    std::string zona; // CAMBIO: de char zona[30] a std::string
     int hora;
 };
 
@@ -29,7 +30,8 @@ private:
     AVLNode* insertar(AVLNode* nodo, const Acceso& acc);
     void inorder(AVLNode* nodo);
     void consultaFranja(AVLNode* nodo, int h1, int h2);
-    void contarZonas(AVLNode* nodo, int* zonas, char zonasNombres[][30], int& nZonas);
+    // CAMBIO: La declaración ahora coincide con la del .cpp
+    void contarZonas(AVLNode* nodo, int* zonas, std::string* zonasNombres, int& nZonas);
 
 public:
     AVLTree();

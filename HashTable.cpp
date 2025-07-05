@@ -1,13 +1,7 @@
 #include "HashTable.h"
 #include <iostream>
 
-using namespace std;
-
-int TablaHash::hash(int id) {
-    int h = id % capacidad;
-    if (h < 0) h += capacidad;
-    return h;
-}
+// La función hash no cambia
 
 void TablaHash::rehacerHash() {
     int capAntigua = capacidad;
@@ -18,20 +12,14 @@ void TablaHash::rehacerHash() {
     cantidad = 0;
     for (int i = 0; i < capAntigua; ++i) {
         if (tablaAntigua[i].activo) {
+            // CAMBIO: Ahora se inserta directamente el std::string
             insertar(tablaAntigua[i].id, tablaAntigua[i].nombre);
         }
     }
     delete[] tablaAntigua;
 }
 
-void TablaHash::copiarCadena(char* destino, const char* origen) {
-    int i = 0;
-    while (origen[i] != '\0' && i < 49) {
-        destino[i] = origen[i];
-        i++;
-    }
-    destino[i] = '\0';
-}
+// CAMBIO: Se elimina la función copiarCadena
 
 TablaHash::TablaHash(int cap, float fc) {
     capacidad = cap;
@@ -45,7 +33,8 @@ TablaHash::~TablaHash() {
     delete[] tabla;
 }
 
-bool TablaHash::insertar(int id, const char* nombre) {
+// CAMBIO: El parámetro es const std::string& y se usa asignación directa
+bool TablaHash::insertar(int id, const std::string& nombre) {
     if ((float)(cantidad + 1) / capacidad > factorCarga) rehacerHash();
     int idx = hash(id);
     int inicio = idx;
@@ -55,18 +44,19 @@ bool TablaHash::insertar(int id, const char* nombre) {
         if (idx == inicio) return false; // Tabla llena
     }
     tabla[idx].id = id;
-    copiarCadena(tabla[idx].nombre, nombre);
+    tabla[idx].nombre = nombre; // CAMBIO: Asignación directa
     tabla[idx].activo = true;
     cantidad++;
     return true;
 }
 
-bool TablaHash::buscar(int id, char* nombreOut) {
+// CAMBIO: El parámetro de salida es std::string&
+bool TablaHash::buscar(int id, std::string& nombreOut) {
     int idx = hash(id);
     int inicio = idx;
     while (tabla[idx].activo) {
         if (tabla[idx].id == id) {
-            copiarCadena(nombreOut, tabla[idx].nombre);
+            nombreOut = tabla[idx].nombre; // CAMBIO: Asignación directa
             return true;
         }
         idx = (idx + 1) % capacidad;
@@ -75,6 +65,7 @@ bool TablaHash::buscar(int id, char* nombreOut) {
     return false;
 }
 
+// La función eliminar no cambia
 bool TablaHash::eliminar(int id) {
     int idx = hash(id);
     int inicio = idx;
