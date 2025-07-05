@@ -161,20 +161,20 @@ int main() {
             int personasCargadas = cargarPersonasDesdeArchivo(archivo);
 
             if (personasCargadas > 0) {
-                tabla = TablaHash();
+                tabla = TablaHash(); // Reinicia la tabla hash
+
+                // CAMBIO CLAVE: Llenamos la tabla hash con punteros
+                for (int i = 0; i < baseDeDatosPersonas.size(); ++i) {
+                    // Pasamos la dirección de memoria (&) de cada objeto Persona
+                    tabla.insertar(&baseDeDatosPersonas[i]);
+                }
+
+                std::cout << "¡Éxito! Se cargaron " << personasCargadas << " registros y se indexaron en la tabla hash." << std::endl;
+
+                // El MaxHeap se puede llenar después, cuando la persona "llega" al evento.
+                // Por ahora lo dejamos vacío para seguir la simulación.
                 heap = ColaPrioridadMaxima();
 
-                for (int i = 0; i < personasCargadas; ++i) {
-                    tabla.insertar(PersonaDB[i].id, PersonaDB[i].nombre);
-
-                    PersonaCola p;
-                    p.id = PersonaDB[i].id;
-                    p.nombre = PersonaDB[i].nombre;
-                    p.tipo = PersonaDB[i].tipo;
-                    p.prioridad = PersonaDB[i].prioridad;
-                    heap.insertar(p);
-                }
-                std::cout << "¡Éxito! Se cargaron y procesaron " << personasCargadas << " registros." << std::endl;
             } else {
                 std::cout << "Fallo al cargar la base de datos." << std::endl;
             }

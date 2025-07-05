@@ -1,11 +1,11 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-#include <string> // CAMBIO: Añadir include para std::string
+#include "baseDeDatos.h" // Incluimos para que conozca la clase Persona
 
+// CAMBIO: La entrada ahora almacena un puntero al objeto Persona completo.
 struct EntradaHash {
-    int id;
-    std::string nombre; // CAMBIO: de char nombre[50] a std::string
+    Persona* personaPtr; // Puntero a la persona
     bool activo;
 };
 
@@ -18,15 +18,17 @@ private:
 
     int hash(int id);
     void rehacerHash();
-    // CAMBIO: ya no se necesita copiarCadena
 
 public:
-    TablaHash(int cap = 1009, float fc = 0.7f);
+    TablaHash(int cap = 50009, float fc = 0.7f); // Capacidad mayor para 50k
     ~TablaHash();
-    // CAMBIO: El parámetro ahora es const std::string&
-    bool insertar(int id, const std::string& nombre);
-    // CAMBIO: El parámetro de salida ahora es std::string&
-    bool buscar(int id, std::string& nombreOut);
+
+    // CAMBIO: El método ahora inserta un puntero a Persona.
+    bool insertar(Persona* persona);
+
+    // CAMBIO: El método ahora busca y devuelve un puntero a Persona.
+    Persona* buscar(int id);
+
     bool eliminar(int id);
     int obtenerCantidad() const;
 };
