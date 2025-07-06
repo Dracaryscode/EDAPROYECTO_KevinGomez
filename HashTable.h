@@ -22,14 +22,15 @@ private:
 public:
     TablaHash(int cap = 50009, float fc = 0.7f); // Capacidad mayor para 50k
     ~TablaHash();
+    // --- CAMBIO: AÑADIMOS LA REGLA DE TRES ---
+    TablaHash(const TablaHash& otra); // Constructor de copia
+    TablaHash& operator=(const TablaHash& otra); // Operador de asignación
+
 
     // CAMBIO: El méto do ahora inserta un puntero a Persona.
-
     bool insertar(Persona* persona);
-
     // CAMBIO: El méto do ahora busca y devuelve un puntero a Persona.
     Persona* buscar(int id);
-
     bool eliminar(int id);
     int obtenerCantidad() const;
 };

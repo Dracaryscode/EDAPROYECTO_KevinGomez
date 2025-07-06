@@ -1,15 +1,13 @@
 #include "MaxHeap.h"
 #include <iostream>
-
-using namespace std;
+#include <utility> // Necesario para std::swap
 
 void ColaPrioridadMaxima::subir(int indice) {
     while (indice > 0) {
         int padre = (indice - 1) / 2;
         if (arreglo[indice].prioridad > arreglo[padre].prioridad) {
-            PersonaCola temp = arreglo[indice];
-            arreglo[indice] = arreglo[padre];
-            arreglo[padre] = temp;
+            // std::swap es más eficiente y seguro que usar una variable temporal
+            std::swap(arreglo[indice], arreglo[padre]);
             indice = padre;
         } else {
             break;
@@ -28,9 +26,7 @@ void ColaPrioridadMaxima::bajar(int indice) {
         if (der < cantidad && arreglo[der].prioridad > arreglo[mayor].prioridad)
             mayor = der;
         if (mayor != indice) {
-            PersonaCola temp = arreglo[indice];
-            arreglo[indice] = arreglo[mayor];
-            arreglo[mayor] = temp;
+            std::swap(arreglo[indice], arreglo[mayor]);
             indice = mayor;
         } else {
             break;
@@ -45,8 +41,6 @@ int ColaPrioridadMaxima::buscarIndice(int id) {
     return -1;
 }
 
-// CAMBIO: Se elimina la función copiarCadena
-
 ColaPrioridadMaxima::ColaPrioridadMaxima(int cap) {
     capacidad = cap;
     cantidad = 0;
@@ -57,9 +51,41 @@ ColaPrioridadMaxima::~ColaPrioridadMaxima() {
     delete[] arreglo;
 }
 
+// --- IMPLEMENTACIÓN DE LA REGLA DE TRES PARA MANEJO SEGURO DE MEMORIA ---
+
+// Constructor de copia
+ColaPrioridadMaxima::ColaPrioridadMaxima(const ColaPrioridadMaxima& otra) {
+    capacidad = otra.capacidad;
+    cantidad = otra.cantidad;
+    arreglo = new PersonaCola[capacidad]; // Creamos nueva memoria
+    for (int i = 0; i < cantidad; ++i) {
+        arreglo[i] = otra.arreglo[i]; // Copiamos cada elemento
+    }
+}
+
+// Operador de asignación
+ColaPrioridadMaxima& ColaPrioridadMaxima::operator=(const ColaPrioridadMaxima& otra) {
+    if (this == &otra) { // Protección contra auto-asignación
+        return *this;
+    }
+
+    delete[] arreglo; // Liberamos la memoria vieja
+
+    capacidad = otra.capacidad;
+    cantidad = otra.cantidad;
+    arreglo = new PersonaCola[capacidad]; // Creamos nueva memoria
+    for (int i = 0; i < cantidad; ++i) {
+        arreglo[i] = otra.arreglo[i]; // Copiamos cada elemento
+    }
+    return *this;
+}
+
+// -----------------------------------------------------------------------
+
+
 bool ColaPrioridadMaxima::insertar(const PersonaCola& persona) {
     if (cantidad == capacidad) return false;
-    // CAMBIO: Asignación directa de std::string
+    // La asignación directa funciona gracias a std::string
     arreglo[cantidad] = persona;
     cantidad++;
     subir(cantidad - 1);
@@ -89,21 +115,21 @@ bool ColaPrioridadMaxima::actualizarPrioridad(int id, int nuevaPrioridad) {
 }
 
 void ColaPrioridadMaxima::mostrarSiguientes(int n) {
-    cout << "\n--- Siguientes personas en la cola (mayor prioridad primero) ---" << endl;
+    std::cout << "\n--- Siguientes personas en la cola (mayor prioridad primero) ---" << std::endl;
 
     // Creación de una copia temporal para no modificar el heap original
     ColaPrioridadMaxima copia = *this;
 
     int mostrar = (n < copia.cantidad) ? n : copia.cantidad;
     if (mostrar == 0) {
-        cout << "No hay personas en la cola." << endl;
+        std::cout << "No hay personas en la cola." << std::endl;
         return;
     }
 
     for (int i = 0; i < mostrar; ++i) {
         PersonaCola p;
         copia.extraerMax(p); // Extraemos el máximo de la copia
-        cout << i + 1 << ". " << p.nombre << " (" << p.tipo << ", Prioridad: " << p.prioridad << ")" << endl;
+        std::cout << i + 1 << ". " << p.nombre << " (" << p.tipo << ", Prioridad: " << p.prioridad << ")" << std::endl;
     }
 }
 

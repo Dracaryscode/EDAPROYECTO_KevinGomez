@@ -141,26 +141,40 @@ int main() {
             else
                 std::cout << "No encontrado." << std::endl;
         } else if (opcion == 7) {
-            if (usarAVL) {
-                Acceso a;
-                std::cout << "DNI/código: ";
-                a.id = leerEntero();
-                std::cout << "Zona: ";
-                std::getline(std::cin, a.zona);
-                std::cout << "Hora (ej: 1430): ";
-                a.hora = leerEntero();
-                arbolAVL.insertar(a);
-                std::cout << "Acceso registrado en AVL." << std::endl;
+            std::cout << "\n--- REGISTRANDO SIGUIENTE ACCESO ---" << std::endl;
+            PersonaCola personaParaIngresar;
+
+            // 1. Sacamos a la persona con mayor prioridad de la cola de espera (Heap)
+            if (heap.extraerMax(personaParaIngresar)) {
+                std::cout << "Pasa adelante: " << personaParaIngresar.nombre
+                          << " (Prioridad: " << personaParaIngresar.prioridad << ")" << std::endl;
+
+                // 2. Pedimos la hora de entrada para el registro
+                std::cout << "Ingrese la hora actual de entrada (formato HHMM, ej: 1430): ";
+                int horaEntrada = leerEntero();
+
+                if (usarAVL) {
+                    Acceso nuevoAcceso;
+                    nuevoAcceso.id = personaParaIngresar.id;
+                    nuevoAcceso.zona = personaParaIngresar.tipo; // La "zona" viene del campo "tipo" del heap
+                    nuevoAcceso.hora = horaEntrada;
+
+                    // 3. Insertamos el acceso en el árbol AVL
+                    arbolAVL.insertar(nuevoAcceso);
+                    std::cout << "Acceso registrado en el árbol AVL." << std::endl;
+                } else {
+                    RBAcceso nuevoAcceso;
+                    nuevoAcceso.id = personaParaIngresar.id;
+                    nuevoAcceso.zona = personaParaIngresar.tipo;
+                    nuevoAcceso.hora = horaEntrada;
+
+                    // 3. Insertamos el acceso en el árbol Red-Black
+                    arbolRB.insertar(nuevoAcceso);
+                    std::cout << "Acceso registrado en el árbol Red-Black." << std::endl;
+                }
+
             } else {
-                RBAcceso a;
-                std::cout << "DNI/código: ";
-                a.id = leerEntero();
-                std::cout << "Zona: ";
-                std::getline(std::cin, a.zona);
-                std::cout << "Hora (ej: 1430): ";
-                a.hora = leerEntero();
-                arbolRB.insertar(a);
-                std::cout << "Acceso registrado en Red-Black." << std::endl;
+                std::cout << "No hay nadie en la cola de espera para ingresar." << std::endl;
             }
         } else if (opcion == 8) {
             if (usarAVL) arbolAVL.mostrarInorder();
@@ -180,24 +194,25 @@ int main() {
             usarAVL = !usarAVL;
             std::cout << "Ahora usando " << (usarAVL ? "AVL" : "Red-Black") << " para accesos." << std::endl;
         } else if (opcion == 12) {
-            char archivo[] = "personas_50k.csv";
+            // Usamos la ruta absoluta que ya configuraste
+            char archivo[] = "K:/01_Programacion/01_EDA2/PROYECTO/EDAPROYECTO_02/Datos/personas_50k.csv";
             std::cout << "Cargando datos desde " << archivo << "..." << std::endl;
 
             int personasCargadas = cargarPersonasDesdeArchivo(archivo);
 
             if (personasCargadas > 0) {
-                tabla = TablaHash(); // Reinicia la tabla hash
+                tabla = TablaHash(); // Reinicia la tabla
 
-                // CAMBIO CLAVE: Llenamos la tabla hash con punteros
-                for (int i = 0; i < baseDeDatosPersonas.size(); ++i) {
-                    // Pasamos la dirección de memoria (&) de cada objeto Persona
+                // --- ESTE ES EL BUCLE QUE DEBES VERIFICAR ---
+                // Nos aseguramos de recorrer el 'std::vector' (baseDeDatosPersonas)
+                // y pasar las direcciones de memoria de sus elementos.
+                for (size_t i = 0; i < baseDeDatosPersonas.size(); ++i) {
                     tabla.insertar(&baseDeDatosPersonas[i]);
                 }
 
-                std::cout << "¡Éxito! Se cargaron " << personasCargadas << " registros y se indexaron en la tabla hash." << std::endl;
+                std::cout << "¡Éxito! Se indexaron " << tabla.obtenerCantidad() << " registros en la tabla hash." << std::endl;
 
-                // El MaxHeap se puede llenar después, cuando la persona "llega" al evento.
-                // Por ahora lo dejamos vacío para seguir la simulación.
+                // El MaxHeap se reinicia y se deja vacío, se llenará con la opción 2.
                 heap = ColaPrioridadMaxima();
 
             } else {

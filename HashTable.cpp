@@ -43,6 +43,45 @@ TablaHash::~TablaHash() {
     delete[] tabla;
 }
 
+// --- IMPLEMENTACIÓN DE LA REGLA DE TRES PARA EVITAR ERRORES DE MEMORIA ---
+
+// Constructor de copia: Crea una copia profunda de otra TablaHash.
+TablaHash::TablaHash(const TablaHash& otra) {
+    capacidad = otra.capacidad;
+    cantidad = otra.cantidad;
+    factorCarga = otra.factorCarga;
+    tabla = new EntradaHash[capacidad]; // Se crea nueva memoria
+    for (int i = 0; i < capacidad; ++i) {
+        tabla[i] = otra.tabla[i]; // Se copia cada elemento
+    }
+}
+
+// Operador de asignación: Asigna una TablaHash a otra de forma segura.
+TablaHash& TablaHash::operator=(const TablaHash& otra) {
+    // 1. Proteger contra la auto-asignación (ej. miTabla = miTabla;)
+    if (this == &otra) {
+        return *this;
+    }
+
+    // 2. Liberar la memoria que ya existía
+    delete[] tabla;
+
+    // 3. Copiar los datos y crear nueva memoria
+    capacidad = otra.capacidad;
+    cantidad = otra.cantidad;
+    factorCarga = otra.factorCarga;
+    tabla = new EntradaHash[capacidad];
+    for (int i = 0; i < capacidad; ++i) {
+        tabla[i] = otra.tabla[i]; // Se copia cada elemento
+    }
+
+    // 4. Devolver el objeto actual para permitir asignaciones en cadena (a = b = c;)
+    return *this;
+}
+
+// -----------------------------------------------------------------------
+
+
 // CAMBIO: Acepta un puntero a Persona y lo almacena
 bool TablaHash::insertar(Persona* persona) {
     if (!persona) return false; // No insertar punteros nulos
@@ -72,7 +111,8 @@ Persona* TablaHash::buscar(int id) {
     int inicio = idx;
 
     // El bucle debe continuar mientras haya posibilidad de encontrarlo
-    while (tabla[idx].personaPtr != nullptr || tabla[idx].activo) {
+    // Se revisa 'activo' en lugar de 'personaPtr != nullptr' para poder pasar sobre casillas borradas.
+    while (tabla[idx].activo || tabla[idx].personaPtr != nullptr) {
         if (tabla[idx].activo && tabla[idx].personaPtr && tabla[idx].personaPtr->id == id) {
             return tabla[idx].personaPtr; // Encontrado, devolvemos el puntero
         }
@@ -85,10 +125,11 @@ Persona* TablaHash::buscar(int id) {
 bool TablaHash::eliminar(int id) {
     int idx = hash(id);
     int inicio = idx;
-    while (tabla[idx].personaPtr != nullptr || tabla[idx].activo) {
+
+    // Se usa la misma lógica de búsqueda para encontrar el elemento a eliminar
+    while (tabla[idx].activo || tabla[idx].personaPtr != nullptr) {
         if (tabla[idx].activo && tabla[idx].personaPtr && tabla[idx].personaPtr->id == id) {
             tabla[idx].activo = false; // Marcamos como inactivo (eliminado lógico)
-            // No borramos el puntero para no afectar la búsqueda de otros elementos
             cantidad--;
             return true;
         }

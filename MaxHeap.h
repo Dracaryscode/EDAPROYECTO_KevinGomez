@@ -1,7 +1,7 @@
 #ifndef MAXHEAP_H
 #define MAXHEAP_H
 
-#include <string> // CAMBIO: Añadir include para std::string
+#include <string> // Necesario para std::string
 
 struct PersonaCola {
     int id;
@@ -18,17 +18,22 @@ private:
 
     void subir(int indice);
     void bajar(int indice);
-    int buscarIndice(int id);
-    // CAMBIO: ya no se necesita copiarCadena
+    // buscarIndice se movió a public para poder usarse fuera si es necesario
 
 public:
-    ColaPrioridadMaxima(int cap = 50000); // CAMBIO: Aumentar capacidad por defecto
+    ColaPrioridadMaxima(int cap = 50000); // Aumentar capacidad por defecto
     ~ColaPrioridadMaxima();
+
+    // --- AÑADIMOS LA REGLA DE TRES PARA MANEJO SEGURO DE MEMORIA ---
+    ColaPrioridadMaxima(const ColaPrioridadMaxima& otra); // Constructor de copia
+    ColaPrioridadMaxima& operator=(const ColaPrioridadMaxima& otra); // Operador de asignación
+
     bool insertar(const PersonaCola& persona);
     bool extraerMax(PersonaCola& persona);
     bool actualizarPrioridad(int id, int nuevaPrioridad);
     void mostrarSiguientes(int n = 5);
     int obtenerCantidad() const;
+    int buscarIndice(int id); // La hacemos pública
 };
 
 #endif // MAXHEAP_H
